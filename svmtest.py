@@ -10,18 +10,20 @@ import numpy as np
 def data_type(s):
     it = {'0': 0, '1': 1}
     return it[s]
-path = u'/Users/tal/PycharmProjects/svmproject/data.text'
+path = u'/Users/tal/PycharmProjects/svmtest/hundata.text'
 data = np.loadtxt(path, dtype=float, delimiter=',', converters={0: data_type})
 # print data
 
 #数据，数据分成几份？/分割位置？,次数就是x为0到19，y为20最后一个，轴，为1水平分割，为0垂直分割
-x, y = np.split(data, (19,), axis=1)
+y, x= np.split(data, (1,), axis=1)
 print x
+print '------------------------------------------------'
 print y
 
 #只取前两列，这个地方应该需要优化，原例子分类在最后一列
 # x = x[:, :2]
-
+# print '------------------------------------------------'
+# print x
 
 #参数为 索要划分的样本特征集，所要划分的样本结果，测试赝本占比（这个示例上没有，不加会报错），训练样本占比，如果为整数就是样本数量，随机数的种子
 
@@ -41,7 +43,7 @@ x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y
 #decision_function_shape='ovo'时，为one v one，即将类别两两之间进行划分，用二分类的方法模拟多分类的结果
 
 
-print x_train
+# print x_train
 # # print len(x_train)
 # print y_train
 # # print y_train.ravel()
@@ -49,7 +51,7 @@ print x_train
 
 
 # # clf = svm.SVC(C=0.1, kernel='linear', decision_function_shape='ovr')
-clf = svm.SVC(C=0.8, kernel='rbf', gamma=20, decision_function_shape='ovr')
+clf = svm.SVC(C=0.8, kernel='rbf', gamma=20, decision_function_shape='ovr',probability=True)
 
 # ravle函数的作用是数组将维[[1,2],[3,4]]----[1,2,3,4]
 clf.fit(x_train, y_train.ravel())
@@ -57,8 +59,12 @@ clf.fit(x_train, y_train.ravel())
 
 print clf.score(x_train, y_train)  # 精度
 y_hat = clf.predict(x_train)
+#判定结果
 print y_hat
+# 概率 需要  SVC()里面的参数  predict_proba is not available when  probability=False
+print clf.predict_proba(x_train)
 #show_accuracy(y_hat, y_train, '训练集')
 print clf.score(x_test, y_test)
 y_hat = clf.predict(x_test)
+print y_hat
 #show_accuracy(y_hat, y_test, '测试集')
